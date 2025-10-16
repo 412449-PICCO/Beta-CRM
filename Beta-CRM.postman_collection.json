@@ -1,0 +1,253 @@
+{
+  "info": {
+    "name": "Beta CRM API",
+    "description": "Colección de requests para el CRM Multi-tenant",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tenantId",
+      "value": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.data.token);",
+                  "    pm.collectionVariables.set('tenantId', response.data.tenantId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@demo.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"agent@demo.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        {
+          "name": "Get All Leads",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-Id",
+                "value": "{{tenantId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/leads?page=0&size=10&sortBy=createdAt&sortDir=DESC",
+              "host": ["{{baseUrl}}"],
+              "path": ["leads"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "sortDir",
+                  "value": "DESC"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Lead by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-Id",
+                "value": "{{tenantId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/leads/l1111111-1111-1111-1111-111111111111",
+              "host": ["{{baseUrl}}"],
+              "path": ["leads", "l1111111-1111-1111-1111-111111111111"]
+            }
+          }
+        },
+        {
+          "name": "Get Leads by Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-Id",
+                "value": "{{tenantId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/leads/status/new",
+              "host": ["{{baseUrl}}"],
+              "path": ["leads", "status", "new"]
+            }
+          }
+        },
+        {
+          "name": "Create Lead",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-Id",
+                "value": "{{tenantId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nuevo Lead\",\n  \"phone\": \"+5215512345678\",\n  \"email\": \"nuevo@example.com\",\n  \"source\": \"API Test\",\n  \"status\": \"new\",\n  \"notes\": \"Lead creado desde Postman\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/leads",
+              "host": ["{{baseUrl}}"],
+              "path": ["leads"]
+            }
+          }
+        },
+        {
+          "name": "Update Lead",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-Id",
+                "value": "{{tenantId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"contacted\",\n  \"score\": 80,\n  \"notes\": \"Lead actualizado desde Postman\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/leads/l1111111-1111-1111-1111-111111111111",
+              "host": ["{{baseUrl}}"],
+              "path": ["leads", "l1111111-1111-1111-1111-111111111111"]
+            }
+          }
+        },
+        {
+          "name": "Delete Lead",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-Id",
+                "value": "{{tenantId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/leads/l4444444-4444-4444-4444-444444444444",
+              "host": ["{{baseUrl}}"],
+              "path": ["leads", "l4444444-4444-4444-4444-444444444444"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
